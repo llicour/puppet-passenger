@@ -7,9 +7,8 @@
 # hassle, by taking care of pretty much all of the heavy lifting for you when
 # it comes to managing your apps' processes and resources.
 
-class passenger {
+class passenger ( $repo_passenger = 'http://passenger.stealthymonkeys.com/rhel/$releasever/$basearch' ) {
     include yum
-    include yum::kermit
     include yum::epel # needed for the libev dep of passenger
 
     # cf puppetlabs-apache
@@ -37,15 +36,14 @@ class passenger {
     file { 'RPM-GPG-KEY-passenger' :
         ensure => present,
         path   => '/etc/pki/rpm-gpg/RPM-GPG-KEY-passenger',
-        source => 'puppet:///modules/kermitrest/RPM-GPG-KEY-passenger',
+        source => 'puppet:///modules/passenger/RPM-GPG-KEY-passenger',
         owner  => 'root',
         group  => 'root',
         mode   => '0644',
     }
 
     yumrepo { 'passenger' :
-        baseurl    =>
-            'http://passenger.stealthymonkeys.com/rhel/$releasever/$basearch',
+        baseurl    => $repo_passenger,
         # some mirrors are out of date !
         #mirrorlist => 'http://passenger.stealthymonkeys.com/rhel/mirrors',
         descr      => 'Red Hat Enterprise $releasever - Phusion Passenger',
